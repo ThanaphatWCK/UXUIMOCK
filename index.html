@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GE Study Buddy & Review Prototype</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Prompt & Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            500: '#4f46e5',
+                            600: '#4338ca',
+                            700: '#3730a3',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #0f172a;
+        }
+        /* Custom scrollbar for inner mobile preview */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col items-center justify-start p-2 sm:p-6">
+
+    <!-- Top Viewport Switcher / Toolbar -->
+    <div class="w-full max-w-md bg-slate-800/80 backdrop-blur border border-slate-700 p-3 rounded-2xl mb-4 text-white shadow-xl flex flex-col gap-2">
+        <div class="flex items-center justify-between px-2">
+            <span class="text-xs font-semibold uppercase tracking-wider text-indigo-400">Figma UI Prototype Guide</span>
+            <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full border border-indigo-500/30">3-Screen Flow</span>
+        </div>
+        <div class="grid grid-cols-3 gap-1.5 bg-slate-900/80 p-1 rounded-xl">
+            <button onclick="switchScreen(1)" id="tab-btn-1" class="py-2 text-xs font-medium rounded-lg transition duration-200 flex items-center justify-center gap-1.5 bg-indigo-600 text-white shadow">
+                <i class="fa-solid fa-house"></i> 1. หน้าแรก
+            </button>
+            <button onclick="switchScreen(2)" id="tab-btn-2" class="py-2 text-xs font-medium rounded-lg transition duration-200 flex items-center justify-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-star"></i> 2. รีวิววิชา
+            </button>
+            <button onclick="switchScreen(3)" id="tab-btn-3" class="py-2 text-xs font-medium rounded-lg transition duration-200 flex items-center justify-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800">
+                <i class="fa-solid fa-comments"></i> 3. คอมเมนต์
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Frame Simulation -->
+    <div class="w-full max-w-[390px] h-[812px] bg-slate-100 rounded-[48px] shadow-2xl overflow-hidden border-[10px] border-slate-800 relative flex flex-col">
+        
+        <!-- Mobile Status Bar Mockup -->
+        <div class="w-full bg-white text-slate-900 px-6 pt-3 pb-2 flex justify-between items-center text-xs font-semibold z-50 shrink-0">
+            <span>9:41</span>
+            <div class="w-20 h-4 bg-slate-900 rounded-full mx-auto absolute left-1/2 -translate-x-1/2 top-2"></div>
+            <div class="flex items-center space-x-1.5">
+                <i class="fa-solid fa-signal"></i>
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-battery-full text-sm"></i>
+            </div>
+        </div>
+
+        <!-- APP CONTENT AREA -->
+        <div class="flex-1 relative overflow-hidden bg-slate-50 flex flex-col">
+
+            <!-- =================================================== -->
+            <!-- SCREEN 1: HOME FEED (หาเพื่อนเรียน) -->
+            <!-- =================================================== -->
+            <div id="screen-1" class="absolute inset-0 flex flex-col bg-slate-100 overflow-y-auto no-scrollbar pb-16 transition-opacity duration-300">
+                
+                <!-- Screen 1 Header -->
+                <div class="bg-white px-4 py-3 border-b border-slate-200 flex items-center justify-between gap-3 sticky top-0 z-20 shadow-sm">
+                    <div class="w-9 h-9 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center text-indigo-600 shrink-0 cursor-pointer hover:bg-indigo-200 transition">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <!-- Search Input Box -->
+                    <div class="flex-1 bg-slate-100 rounded-full px-3 py-1.5 flex items-center gap-2 border border-slate-200 focus-within:border-indigo-500 focus-within:bg-white transition">
+                        <span class="text-slate-400 text-xs font-medium pl-1">ค้นหา...</span>
+                        <input type="text" placeholder="" class="w-full bg-transparent text-xs outline-none text-slate-700" readonly>
+                        <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs pr-1"></i>
+                    </div>
+                    <div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 shrink-0 cursor-pointer hover:bg-slate-200 transition relative">
+                        <i class="fa-regular fa-comment-dots"></i>
+                        <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white"></span>
+                    </div>
+                </div>
+
+                <!-- Feed Content -->
+                <div class="p-4 space-y-4">
+                    
+                    <!-- Create Post Box Prompt -->
+                    <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 flex items-center gap-3 cursor-pointer hover:border-indigo-300 transition" onclick="alert('กดเพื่อพิมพ์สร้างโพสต์หาเพื่อนเรียนใหม่')">
+                        <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 text-sm">
+                            <i class="fa-solid fa-pen"></i>
+                        </div>
+                        <span class="text-slate-400 text-xs">เขียนโพสต์ ที่นี่ . . .</span>
+                    </div>
+
+                    <!-- Main Post Card (Based on low1.png) -->
+                    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 relative space-y-3">
+                        
+                        <!-- Post Header -->
+                        <div class="flex items-start justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm shadow-md">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-800">ชื่อผู้ใช้งาน</h4>
+                                    <p class="text-[11px] text-slate-400">0 สถานะเวลา • พึ่งลงทะเบียน</p>
+                                </div>
+                            </div>
+                            <button class="text-slate-400 hover:text-slate-600 px-1">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                        </div>
+
+                        <!-- Course Tag Header -->
+                        <div class="bg-indigo-50 border border-indigo-100 text-indigo-700 px-3 py-1.5 rounded-xl text-xs font-semibold inline-block">
+                            <i class="fa-solid fa-book-open mr-1"></i> หาเพื่อนเรียนวิชา: ชีวิตและสุขภาพ
+                        </div>
+
+                        <!-- Post Body Content -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 relative min-h-[140px] flex flex-col justify-between">
+                            
+                            <!-- Star Action Button (Connect to Screen 2) -->
+                            <button onclick="switchScreen(2)" class="absolute top-3 right-3 bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm hover:scale-105 active:scale-95 transition cursor-pointer border border-amber-300">
+                                <i class="fa-solid fa-star text-white animate-pulse"></i>
+                                <span>ดูรีวิว</span>
+                            </button>
+
+                            <div class="space-y-2 pr-20 pt-1">
+                                <p class="font-bold text-slate-800 text-base">เมคเฟรนกันครับ</p>
+                                <p class="text-xs text-slate-600 leading-relaxed">ใครสนใจเรียนด้วยกัน เมนท์มาเลย</p>
+                                <div class="text-xl">🎧 🎧</div>
+                            </div>
+
+                            <!-- Reaction counts -->
+                            <div class="flex items-center justify-between text-[11px] text-slate-400 pt-3 border-t border-slate-200/60 mt-2">
+                                <span>👍 ❤️ 😲 1,200</span>
+                                <span class="cursor-pointer hover:underline" onclick="switchScreen(3)">Comment (3)</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons Bar -->
+                        <div class="grid grid-cols-4 gap-1 pt-1 text-slate-600 text-xs font-medium">
+                            <!-- Like Toggle -->
+                            <button id="like-btn" onclick="toggleLike()" class="flex flex-col items-center justify-center py-2 rounded-xl hover:bg-slate-50 transition text-slate-500">
+                                <i id="like-icon" class="fa-regular fa-thumbs-up text-base mb-1"></i>
+                                <span id="like-text">Like</span>
+                            </button>
+                            <!-- Comment Switcher -->
+                            <button onclick="switchScreen(3)" class="flex flex-col items-center justify-center py-2 rounded-xl hover:bg-slate-50 transition text-indigo-600 font-semibold bg-indigo-50/50">
+                                <i class="fa-regular fa-comment text-base mb-1"></i>
+                                <span>Comment</span>
+                            </button>
+                            <!-- Share -->
+                            <button onclick="alert('แชร์โพสต์นี้เรียบร้อยแล้ว!')" class="flex flex-col items-center justify-center py-2 rounded-xl hover:bg-slate-50 transition text-slate-500">
+                                <i class="fa-solid fa-share text-base mb-1"></i>
+                                <span>Share</span>
+                            </button>
+                            <!-- Send -->
+                            <button onclick="alert('ทักแชทส่วนตัวหาผู้โพสต์')" class="flex flex-col items-center justify-center py-2 rounded-xl hover:bg-slate-50 transition text-slate-500">
+                                <i class="fa-regular fa-paper-plane text-base mb-1"></i>
+                                <span>Send</span>
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- =================================================== -->
+            <!-- SCREEN 2: REVIEW PAGE (รายการรีวิววิชา) -->
+            <!-- =================================================== -->
+            <div id="screen-2" class="absolute inset-0 flex flex-col bg-slate-100 overflow-y-auto no-scrollbar pb-16 opacity-0 pointer-events-none transition-opacity duration-300">
+                
+                <!-- Header with Back Button -->
+                <div class="bg-white px-4 py-3 border-b border-slate-200 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+                    <button onclick="switchScreen(1)" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <h2 class="font-bold text-base text-slate-800">รายการรีวิว</h2>
+                    <div class="w-8"></div>
+                </div>
+
+                <div class="p-4 space-y-4">
+
+                    <!-- Section 1: Write Review Prompt Banner -->
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 text-center space-y-2">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center justify-center gap-1">
+                            <span class="text-amber-500">✳️</span> Review
+                        </h3>
+                        <p class="text-xs text-slate-500 leading-relaxed px-2">
+                            เขียนรีวิวของคุณ แชร์ประสบการณ์ การเรียนวิชา GE ให้กับเพื่อนๆ น้องๆ
+                        </p>
+                    </div>
+
+                    <!-- Section 2: Review Form Box (Based on low2.png) -->
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-bold text-slate-700">รหัสวิชา:</label>
+                            <input type="text" id="review-course-code" value="233154 ชีวิตและสุขภาพ" class="bg-slate-100 border border-slate-300 rounded-lg px-2.5 py-1 text-xs text-slate-800 w-2/3 outline-none focus:border-indigo-500">
+                        </div>
+
+                        <div class="text-center py-1">
+                            <p class="text-xs font-bold text-slate-700 mb-1.5">ระดับความง่าย</p>
+                            <!-- Clickable Interactive Stars -->
+                            <div class="flex justify-center gap-2 text-amber-400 text-xl cursor-pointer" id="star-rating">
+                                <i class="fa-solid fa-star star-icon" onclick="setRating(1)"></i>
+                                <i class="fa-solid fa-star star-icon" onclick="setRating(2)"></i>
+                                <i class="fa-solid fa-star star-icon" onclick="setRating(3)"></i>
+                                <i class="fa-solid fa-star star-icon" onclick="setRating(4)"></i>
+                                <i class="fa-regular fa-star star-icon text-slate-300" onclick="setRating(5)"></i>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-xs font-bold text-slate-700 block mb-1">คำแนะนำ</label>
+                            <textarea id="review-input-text" rows="2" placeholder="พิมพ์คำแนะนำที่นี่..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 resize-none"></textarea>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button onclick="submitReview()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs px-4 py-1.5 rounded-lg transition active:scale-95 shadow-sm">
+                                ส่งรีวิว
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr class="border-slate-200 my-2">
+
+                    <!-- Section 3: Read Reviews Section (Based on low2.png) -->
+                    <div class="space-y-3">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1">
+                            <span class="text-amber-500">✳️</span> อ่านรีวิว
+                        </h3>
+
+                        <!-- Review List Container -->
+                        <div id="review-list" class="space-y-3">
+                            <!-- Existing Review Card -->
+                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+                                        <span class="text-xs font-bold text-slate-700">รุ่นพี่ปีปีก่อน</span>
+                                    </div>
+                                    <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md text-[11px] font-bold">
+                                        ⭐ 4.5/5
+                                    </span>
+                                </div>
+
+                                <div class="bg-indigo-50/50 border border-indigo-100 rounded-lg p-1.5 text-center">
+                                    <span class="text-xs font-bold text-indigo-900">วิชา 233154 ชีวิตและสุขภาพ</span>
+                                </div>
+
+                                <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl">
+                                    <p class="text-xs text-slate-700 leading-relaxed">
+                                        เรียนเก็บ A ง่ายมาก เข้าเรียน ทำงานส่งครบ ก็สบายแล้ว
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =================================================== -->
+            <!-- SCREEN 3: COMMENTS PAGE (ความคิดเห็น) -->
+            <!-- =================================================== -->
+            <div id="screen-3" class="absolute inset-0 flex flex-col bg-slate-100 opacity-0 pointer-events-none transition-opacity duration-300">
+                
+                <!-- Header with Back Button -->
+                <div class="bg-white px-4 py-3 border-b border-slate-200 flex items-center justify-between sticky top-0 z-20 shadow-sm shrink-0">
+                    <button onclick="switchScreen(1)" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 hover:bg-slate-200 transition">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <h2 class="font-bold text-base text-slate-800">ความคิดเห็น</h2>
+                    <div class="w-8"></div>
+                </div>
+
+                <!-- Comments List Scroll Area -->
+                <div id="comments-container" class="flex-1 p-4 overflow-y-auto space-y-4 no-scrollbar pb-36">
+                    
+                    <!-- Comment 1 -->
+                    <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2.5">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">
+                                    สม
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-800">สมชาย</span>
+                                    <span class="text-[10px] text-slate-400 ml-2">5 นาที</span>
+                                </div>
+                            </div>
+                            <button onclick="likeComment(this)" class="text-slate-400 hover:text-indigo-600 text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-thumbs-up"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-700 pl-10">ลงด้วยครับ</p>
+                        <div class="flex items-center space-x-4 pl-10 text-[11px] text-slate-500 font-medium">
+                            <span class="like-count">2 Like</span>
+                            <span class="cursor-pointer hover:underline text-indigo-600" onclick="replyTo('สมชาย')">↩ Reply</span>
+                        </div>
+                    </div>
+
+                    <!-- Comment 2 -->
+                    <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2.5">
+                                <div class="w-8 h-8 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center font-bold text-xs">
+                                    ศรี
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-800">สมศรี</span>
+                                    <span class="text-[10px] text-slate-400 ml-2">10 นาที</span>
+                                </div>
+                            </div>
+                            <button onclick="likeComment(this)" class="text-slate-400 hover:text-indigo-600 text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-thumbs-up"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-700 pl-10">ได้ค่ะ</p>
+                        <div class="flex items-center space-x-4 pl-10 text-[11px] text-slate-500 font-medium">
+                            <span class="like-count">1 Like</span>
+                            <span class="cursor-pointer hover:underline text-indigo-600" onclick="replyTo('สมศรี')">↩ Reply</span>
+                        </div>
+                    </div>
+
+                    <!-- Comment 3 -->
+                    <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2.5">
+                                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-xs">
+                                    รวย
+                                </div>
+                                <div>
+                                    <span class="text-xs font-bold text-slate-800">สำรวย</span>
+                                    <span class="text-[10px] text-slate-400 ml-2">12 นาที</span>
+                                </div>
+                            </div>
+                            <button onclick="likeComment(this)" class="text-slate-400 hover:text-indigo-600 text-xs flex items-center gap-1">
+                                <i class="fa-regular fa-thumbs-up"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-700 pl-10">มาครับ</p>
+                        <div class="flex items-center space-x-4 pl-10 text-[11px] text-slate-500 font-medium">
+                            <span class="like-count">3 Like</span>
+                            <span class="cursor-pointer hover:underline text-indigo-600" onclick="replyTo('สำรวย')">↩ Reply</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Bottom Input Box (Based on low3.png) -->
+                <div class="absolute bottom-16 left-0 right-0 bg-white border-t border-slate-200 p-3 space-y-2 z-20 shadow-lg">
+                    <div class="bg-slate-50 border border-slate-300 rounded-2xl p-2.5 space-y-2 focus-within:border-indigo-500 transition">
+                        <input id="comment-input" type="text" placeholder="แสดงความคิดเห็น ที่นี่..." class="w-full bg-transparent text-xs text-slate-800 outline-none">
+                        
+                        <!-- Toolbar (B, I, f, @, Emoji, Send) -->
+                        <div class="flex items-center justify-between pt-1 border-t border-slate-200 text-slate-500 text-xs">
+                            <div class="flex items-center space-x-3 font-semibold pl-1">
+                                <span class="cursor-pointer hover:text-slate-800 font-bold">B</span>
+                                <span class="cursor-pointer hover:text-slate-800 italic">I</span>
+                                <span class="cursor-pointer hover:text-slate-800 font-serif">f</span>
+                                <span class="cursor-pointer hover:text-slate-800">@</span>
+                                <span class="cursor-pointer hover:text-slate-800">📎</span>
+                                <span class="cursor-pointer hover:text-slate-800">😊</span>
+                            </div>
+                            <button onclick="addComment()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg text-xs font-medium transition active:scale-95 flex items-center gap-1">
+                                <span>Send</span>
+                                <i class="fa-solid fa-paper-plane text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- GLOBAL MOBILE BOTTOM NAVIGATION BAR (Across all 3 screens) -->
+        <div class="absolute bottom-0 left-0 right-0 h-16 bg-white border-t border-slate-200 flex items-center justify-around px-2 z-30 shadow-lg">
+            
+            <!-- Home -->
+            <button onclick="switchScreen(1)" id="nav-1" class="flex flex-col items-center justify-center text-indigo-600 w-12 py-1">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[9px] font-medium mt-0.5">หน้าแรก</span>
+            </button>
+            
+            <!-- Review -->
+            <button onclick="switchScreen(2)" id="nav-2" class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 w-12 py-1">
+                <i class="fa-solid fa-users text-lg"></i>
+                <span class="text-[9px] font-medium mt-0.5">รีวิว</span>
+            </button>
+            
+            <!-- Plus (Add Post) -->
+            <button onclick="alert('สร้างโพสต์ใหม่')" class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 w-12 py-1">
+                <div class="w-8 h-8 rounded-xl bg-slate-100 border border-slate-300 flex items-center justify-center text-slate-700 shadow-sm">
+                    <i class="fa-solid fa-plus text-sm"></i>
+                </div>
+            </button>
+            
+            <!-- Notification -->
+            <button onclick="alert('การแจ้งเตือน')" class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 w-12 py-1 relative">
+                <i class="fa-regular fa-bell text-lg"></i>
+                <span class="absolute top-1 right-3 w-2 h-2 bg-rose-500 rounded-full"></span>
+                <span class="text-[9px] font-medium mt-0.5">แจ้งเตือน</span>
+            </button>
+            
+            <!-- Profile -->
+            <button onclick="alert('หน้าโปรไฟล์ส่วนตัว')" class="flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 w-12 py-1">
+                <i class="fa-solid fa-box-archive text-lg"></i>
+                <span class="text-[9px] font-medium mt-0.5">ของฉัน</span>
+            </button>
+            
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT FOR INTERACTIVITY -->
+    <script>
+        let currentScreen = 1;
+        let selectedStars = 4;
+        let isLiked = false;
+
+        // Switch Screens
+        function switchScreen(screenNum) {
+            currentScreen = screenNum;
+            
+            // Hide all screens
+            for (let i = 1; i <= 3; i++) {
+                const screen = document.getElementById(`screen-${i}`);
+                const tabBtn = document.getElementById(`tab-btn-${i}`);
+                const navBtn = document.getElementById(`nav-${i}`);
+
+                screen.classList.add('opacity-0', 'pointer-events-none');
+                
+                if (tabBtn) {
+                    tabBtn.className = "py-2 text-xs font-medium rounded-lg transition duration-200 flex items-center justify-center gap-1.5 text-slate-400 hover:text-white hover:bg-slate-800";
+                }
+            }
+
+            // Show active screen
+            const activeScreen = document.getElementById(`screen-${screenNum}`);
+            const activeTabBtn = document.getElementById(`tab-btn-${screenNum}`);
+            
+            activeScreen.classList.remove('opacity-0', 'pointer-events-none');
+
+            if (activeTabBtn) {
+                activeTabBtn.className = "py-2 text-xs font-medium rounded-lg transition duration-200 flex items-center justify-center gap-1.5 bg-indigo-600 text-white shadow";
+            }
+
+            // Highlight bottom nav
+            const nav1 = document.getElementById('nav-1');
+            const nav2 = document.getElementById('nav-2');
+            if (screenNum === 1) {
+                nav1.className = "flex flex-col items-center justify-center text-indigo-600 w-12 py-1";
+                nav2.className = "flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 w-12 py-1";
+            } else if (screenNum === 2) {
+                nav1.className = "flex flex-col items-center justify-center text-slate-400 hover:text-slate-600 w-12 py-1";
+                nav2.className = "flex flex-col items-center justify-center text-indigo-600 w-12 py-1";
+            }
+        }
+
+        // Toggle Like Button on Post
+        function toggleLike() {
+            isLiked = !isLiked;
+            const likeBtn = document.getElementById('like-btn');
+            const likeIcon = document.getElementById('like-icon');
+            const likeText = document.getElementById('like-text');
+
+            if (isLiked) {
+                likeBtn.className = "flex flex-col items-center justify-center py-2 rounded-xl bg-indigo-50 text-indigo-600 font-semibold transition";
+                likeIcon.className = "fa-solid fa-thumbs-up text-base mb-1 text-indigo-600 animate-bounce";
+                likeText.innerText = "Liked";
+            } else {
+                likeBtn.className = "flex flex-col items-center justify-center py-2 rounded-xl hover:bg-slate-50 transition text-slate-500";
+                likeIcon.className = "fa-regular fa-thumbs-up text-base mb-1";
+                likeText.innerText = "Like";
+            }
+        }
+
+        // Star Rating Setter in Review Screen
+        function setRating(stars) {
+            selectedStars = stars;
+            const starIcons = document.querySelectorAll('#star-rating .star-icon');
+            starIcons.forEach((icon, idx) => {
+                if (idx < stars) {
+                    icon.className = "fa-solid fa-star star-icon text-amber-400";
+                } else {
+                    icon.className = "fa-regular fa-star star-icon text-slate-300";
+                }
+            });
+        }
+
+        // Add Review Dynamically
+        function submitReview() {
+            const courseCode = document.getElementById('review-course-code').value.trim();
+            const reviewText = document.getElementById('review-input-text').value.trim();
+
+            if (!reviewText) {
+                alert('กรุณากรอกคำแนะนำเพิ่มเติมก่อนส่งรีวิวครับ');
+                return;
+            }
+
+            const reviewList = document.getElementById('review-list');
+            const newCard = document.createElement('div');
+            newCard.className = "bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-2 transition animate-fade-in";
+            newCard.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-xs font-bold">
+                            คุณ
+                        </div>
+                        <span class="text-xs font-bold text-slate-700">รีวิวของคุณ (พึ่งโพสต์)</span>
+                    </div>
+                    <span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md text-[11px] font-bold">
+                        ⭐ ${selectedStars}.0/5
+                    </span>
+                </div>
+                <div class="bg-indigo-50/50 border border-indigo-100 rounded-lg p-1.5 text-center">
+                    <span class="text-xs font-bold text-indigo-900">วิชา ${courseCode}</span>
+                </div>
+                <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl">
+                    <p class="text-xs text-slate-700 leading-relaxed">${reviewText}</p>
+                </div>
+            `;
+
+            reviewList.prepend(newCard);
+            document.getElementById('review-input-text').value = '';
+            alert('เพิ่มรีวิววิชาเรียบร้อยแล้ว!');
+        }
+
+        // Add Comment Dynamically
+        function addComment() {
+            const input = document.getElementById('comment-input');
+            const commentText = input.value.trim();
+
+            if (!commentText) return;
+
+            const container = document.getElementById('comments-container');
+            const newComment = document.createElement('div');
+            newComment.className = "bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 space-y-2";
+            newComment.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-xs">
+                            คุณ
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-slate-800">คุณ (ผู้ใช้งาน)</span>
+                            <span class="text-[10px] text-slate-400 ml-2">เมื่อครู่นี้</span>
+                        </div>
+                    </div>
+                    <button onclick="likeComment(this)" class="text-slate-400 hover:text-indigo-600 text-xs flex items-center gap-1">
+                        <i class="fa-regular fa-thumbs-up"></i>
+                    </button>
+                </div>
+                <p class="text-xs text-slate-700 pl-10">${commentText}</p>
+                <div class="flex items-center space-x-4 pl-10 text-[11px] text-slate-500 font-medium">
+                    <span class="like-count">0 Like</span>
+                    <span class="cursor-pointer hover:underline text-indigo-600" onclick="replyTo('คุณ')">↩ Reply</span>
+                </div>
+            `;
+
+            container.appendChild(newComment);
+            input.value = '';
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Reply shortcut
+        function replyTo(name) {
+            const input = document.getElementById('comment-input');
+            input.value = `@${name} `;
+            input.focus();
+        }
+
+        // Like Comment
+        function likeComment(btn) {
+            const icon = btn.querySelector('i');
+            const countSpan = btn.closest('.bg-white').querySelector('.like-count');
+            
+            if (icon.classList.contains('fa-regular')) {
+                icon.className = 'fa-solid fa-thumbs-up text-indigo-600';
+                countSpan.innerText = ' Liked';
+            } else {
+                icon.className = 'fa-regular fa-thumbs-up';
+                countSpan.innerText = '0 Like';
+            }
+        }
+    </script>
+
+</body>
+</html>
